@@ -40,22 +40,22 @@ func (p *LongPrinter) Print(f *os.File) error {
 					continue
 				}
 			}
-			printFile(i)
+			p.printFile(i)
 		}
 	} else {
-		printFile(pi)
+		p.printFile(pi)
 	}
 
 	return nil
 }
 
-func printFile(i os.FileInfo) {
+func (p *LongPrinter) printFile(i os.FileInfo) {
 	fmt.Printf("%10d\t%s\t", i.Size(), i.ModTime().Format("2006-01-02 15:04"))
 
-	var filePrefix = "\U0001f4c3"
+	var filePrefix = FILE_ICON_NORMAL
 	if i.IsDir() {
 		color.Set(color.FgBlue)
-		filePrefix = "\U0001f4c1"
+		filePrefix = FILE_ICON_DIR
 	}
 	fmt.Printf("%s", filePrefix+" "+i.Name())
 	color.Unset()

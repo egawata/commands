@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	withHidden = flag.Bool("all", false, "With hidden files")
+	longFormat = flag.Bool("l", false, "Long format")
+	withHidden = flag.Bool("a", false, "With hidden files")
 )
 
 func main() {
@@ -28,7 +29,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	p := printer.NewLongPrinter(*withHidden)
+	var p printer.Printer
+
+	if *longFormat {
+		p = printer.NewLongPrinter(*withHidden)
+	} else {
+		p = printer.NewSimplePrinter(*withHidden)
+	}
+
 	err = p.Print(f)
 	if err != nil {
 		log.Fatal(err)
