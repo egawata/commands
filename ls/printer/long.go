@@ -3,6 +3,7 @@ package printer
 import (
 	"fmt"
 	"os"
+	"sort"
 
 	"github.com/fatih/color"
 )
@@ -29,6 +30,7 @@ func (p *LongPrinter) Print(f *os.File) error {
 			return fmt.Errorf("ReadDir: %w", err)
 		}
 
+		var fis fileInfoList
 		for _, f := range files {
 			i, err := f.Info()
 			if err != nil {
@@ -40,7 +42,11 @@ func (p *LongPrinter) Print(f *os.File) error {
 					continue
 				}
 			}
-			p.printFile(i)
+			fis = append(fis, i)
+		}
+		sort.Sort(fis)
+		for _, fi := range fis {
+			p.printFile(fi)
 		}
 	} else {
 		p.printFile(pi)

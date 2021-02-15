@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strings"
 	"syscall"
 
@@ -45,7 +46,7 @@ func (p *SimplePrinter) Print(f *os.File) error {
 		}
 
 		longest := 0
-		var iList []os.FileInfo
+		var iList fileInfoList
 
 		for _, f := range files {
 			i, err := f.Info()
@@ -62,7 +63,6 @@ func (p *SimplePrinter) Print(f *os.File) error {
 
 			if longest < len(name) {
 				longest = len(name)
-				fmt.Printf("longest = %s, %d\n", name, len(name))
 			}
 
 			iList = append(iList, i)
@@ -76,8 +76,9 @@ func (p *SimplePrinter) Print(f *os.File) error {
 		if colNum == 0 {
 			colNum = 1
 		}
-		rowNum := int(len(iList)/colNum) + 1
-		fmt.Printf("termwidth = %d, col = %d, row = %d, longest = %d\n", termWidth, colNum, rowNum, longest)
+		rowNum := int((len(iList)-1)/colNum) + 1
+
+		sort.Sort(iList)
 
 		for y := 0; y < rowNum; y++ {
 			for x := 0; x < colNum; x++ {

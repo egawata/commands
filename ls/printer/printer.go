@@ -12,3 +12,17 @@ const (
 type Printer interface {
 	Print(*os.File) error
 }
+
+type fileInfoList []os.FileInfo
+
+func (f fileInfoList) Len() int {
+	return len(f)
+}
+
+func (f fileInfoList) Swap(i, j int) {
+	f[i], f[j] = f[j], f[i]
+}
+
+func (f fileInfoList) Less(i, j int) bool {
+	return f[i].Name() < f[j].Name()
+}
