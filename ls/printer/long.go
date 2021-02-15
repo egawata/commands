@@ -3,7 +3,6 @@ package printer
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"sort"
 
 	"github.com/fatih/color"
@@ -63,21 +62,7 @@ func (p *LongPrinter) Print(path string) error {
 			p.printFile(fi)
 		}
 	} else {
-		matches, err := filepath.Glob(pi.Name())
-		if err != nil {
-			return fmt.Errorf("Glob: %w", err)
-		}
-		for _, fn := range matches {
-			f, err := os.Open(fn)
-			if err != nil {
-				return fmt.Errorf("Open: %w", err)
-			}
-			i, err := f.Stat()
-			if err != nil {
-				return fmt.Errorf("Info: %w", err)
-			}
-			p.printFile(i)
-		}
+		p.printFile(pi)
 	}
 
 	return nil
