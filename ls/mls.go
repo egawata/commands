@@ -1,21 +1,26 @@
 package main
 
 import (
-	"flag"
 	"log"
 
 	"github.com/egawata/commands/ls/printer"
+	flag "github.com/spf13/pflag"
 )
 
 var (
-	longFormat = flag.Bool("l", false, "Long format")
-	withHidden = flag.Bool("a", false, "With hidden files")
+	longFormat bool
+	withHidden bool
 )
+
+func init() {
+	flag.BoolVarP(&longFormat, "long", "l", false, "long format")
+	flag.BoolVarP(&withHidden, "all", "a", false, "with hidden files")
+}
 
 func main() {
 	var err error
-	flag.Parse()
 
+	flag.Parse()
 	paths := flag.Args()
 	if len(paths) == 0 {
 		paths = append(paths, ".")
@@ -27,13 +32,13 @@ func main() {
 	}
 
 	opt := &printer.PrinterOption{
-		WithHidden: *withHidden,
+		WithHidden: withHidden,
 		AddDirname: isMultiPath,
 	}
 	for _, path := range paths {
 		var p printer.Printer
 
-		if *longFormat {
+		if longFormat {
 			p = printer.NewLongPrinter(opt)
 		} else {
 			p = printer.NewSimplePrinter(opt)
