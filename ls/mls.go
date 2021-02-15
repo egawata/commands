@@ -2,11 +2,10 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
-	"github.com/fatih/color"
+	"github.com/egawata/commands/ls/printer"
 )
 
 var (
@@ -24,30 +23,14 @@ func main() {
 		path = args[0]
 	}
 
-	files, err := os.ReadDir(path)
+	f, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for _, f := range files {
-		i, err := f.Info()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if !*withHidden {
-			if i.Name()[0] == '.' {
-				continue
-			}
-		}
-		fmt.Printf("%10d\t%s\t", i.Size(), i.ModTime().Format("2006-01-02 15:04"))
-
-		if i.IsDir() {
-			color.Set(color.FgBlue)
-		}
-		fmt.Printf("%s", i.Name())
-		color.Unset()
-
-		fmt.Printf("\n")
+	p := printer.NewDefaultPrinter(*withHidden)
+	err = p.Print(f)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
