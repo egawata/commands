@@ -2,9 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
-	"os"
 
 	"github.com/egawata/commands/ls/printer"
 )
@@ -15,6 +13,7 @@ var (
 )
 
 func main() {
+	var err error
 	flag.Parse()
 
 	paths := flag.Args()
@@ -27,29 +26,22 @@ func main() {
 		isMultiPath = true
 	}
 
+	opt := &printer.PrinterOption{
+		WithHidden: *withHidden,
+		AddDirname: isMultiPath,
+	}
 	for _, path := range paths {
-		f, err := os.Open(path)
-		if err != nil {
-			log.Fatal(err)
-		}
-
 		var p printer.Printer
 
 		if *longFormat {
-			p = printer.NewLongPrinter(*withHidden)
+			p = printer.NewLongPrinter(opt)
 		} else {
-			p = printer.NewSimplePrinter(*withHidden)
+			p = printer.NewSimplePrinter(opt)
 		}
 
-		if isMultiPath {
-			fmt.Printf("%s:\n", path)
-		}
-		err = p.Print(f)
+		err = p.Print(path)
 		if err != nil {
 			log.Fatal(err)
-		}
-		if isMultiPath {
-			fmt.Printf("\n")
 		}
 	}
 }

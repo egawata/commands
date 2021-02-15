@@ -10,7 +10,12 @@ const (
 )
 
 type Printer interface {
-	Print(*os.File) error
+	Print(string) error
+}
+
+type PrinterOption struct {
+	WithHidden bool
+	AddDirname bool
 }
 
 type fileInfoList []os.FileInfo

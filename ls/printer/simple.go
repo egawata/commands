@@ -20,15 +20,23 @@ const (
 
 type SimplePrinter struct {
 	withHidden bool
+	addDirname bool
 }
 
-func NewSimplePrinter(withHidden bool) *SimplePrinter {
+func NewSimplePrinter(opt *PrinterOption) *SimplePrinter {
 	return &SimplePrinter{
-		withHidden: withHidden,
+		withHidden: opt.WithHidden,
+		addDirname: opt.AddDirname,
 	}
 }
 
-func (p *SimplePrinter) Print(f *os.File) error {
+func (p *SimplePrinter) Print(path string) error {
+	f, err := os.Open(path)
+	if err != nil {
+		return fmt.Errorf("Open: %w", err)
+	}
+	defer f.Close()
+
 	pi, err := f.Stat()
 	if err != nil {
 		return fmt.Errorf("Stat: %w", err)
@@ -80,6 +88,10 @@ func (p *SimplePrinter) Print(f *os.File) error {
 
 		sort.Sort(iList)
 
+		if p.addDirname {
+			fmt.Printf("%s:\n", path)
+		}
+
 		for y := 0; y < rowNum; y++ {
 			for x := 0; x < colNum; x++ {
 				ind := x*rowNum + y
@@ -92,6 +104,7 @@ func (p *SimplePrinter) Print(f *os.File) error {
 		}
 	} else {
 		p.printFile(pi, termWidth)
+		fmt.Printf("\n")
 	}
 
 	return nil
