@@ -7,17 +7,17 @@ import (
 	"github.com/fatih/color"
 )
 
-type DefaultPrinter struct {
+type LongPrinter struct {
 	withHidden bool // 隠しファイルも表示する
 }
 
-func NewDefaultPrinter(withHidden bool) *DefaultPrinter {
-	return &DefaultPrinter{
+func NewLongPrinter(withHidden bool) *LongPrinter {
+	return &LongPrinter{
 		withHidden: withHidden,
 	}
 }
 
-func (p *DefaultPrinter) Print(f *os.File) error {
+func (p *LongPrinter) Print(f *os.File) error {
 	pi, err := f.Stat()
 	if err != nil {
 		return fmt.Errorf("Stat: %w", err)

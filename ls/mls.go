@@ -28,7 +28,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	p := printer.NewDefaultPrinter(*withHidden)
+	p := printer.NewLongPrinter(*withHidden)
 	err = p.Print(f)
 	if err != nil {
 		log.Fatal(err)
