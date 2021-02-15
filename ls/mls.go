@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -16,29 +17,39 @@ var (
 func main() {
 	flag.Parse()
 
-	args := flag.Args()
-	var path string
-	if len(args) == 0 {
-		path = "."
-	} else {
-		path = args[0]
+	paths := flag.Args()
+	if len(paths) == 0 {
+		paths = append(paths, ".")
 	}
 
-	f, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
+	var isMultiPath bool
+	if len(paths) > 1 {
+		isMultiPath = true
 	}
 
-	var p printer.Printer
+	for _, path := range paths {
+		f, err := os.Open(path)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	if *longFormat {
-		p = printer.NewLongPrinter(*withHidden)
-	} else {
-		p = printer.NewSimplePrinter(*withHidden)
-	}
+		var p printer.Printer
 
-	err = p.Print(f)
-	if err != nil {
-		log.Fatal(err)
+		if *longFormat {
+			p = printer.NewLongPrinter(*withHidden)
+		} else {
+			p = printer.NewSimplePrinter(*withHidden)
+		}
+
+		if isMultiPath {
+			fmt.Printf("%s:\n", path)
+		}
+		err = p.Print(f)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if isMultiPath {
+			fmt.Printf("\n")
+		}
 	}
 }
